@@ -15,7 +15,7 @@ Le projet est composé de deux parties :
 Avant d’exécuter le projet, il est nécessaire d’avoir installé sur la machine :
 
 - **Node.js** (version 18 ou supérieure recommandée)
-- **MySQL Server**
+- **MySQL Server** (version 8.0.45)
 - Un terminal (CMD, PowerShell ou Terminal) ou un IDE comme VScode.
 
 ---
@@ -26,20 +26,40 @@ Avant d’exécuter le projet, il est nécessaire d’avoir installé sur la mac
 Projet/
 │
 ├── BackEnd/
-│   ├── app.js              # Point d’entrée du serveur
-│   ├── routes/             # Routes de l’API
-│   ├── models/             # Modèles Sequelize
-│   ├── config/             # Configuration (base de données)
+│   ├── app.js                      # Point d'entrée du serveur
+│   ├── config/
+│   │   └── database.js             # Configuration de la base de données
+│   ├── controllers/
+│   │   └── authCont.js             # Contrôleurs d'authentification
+│   ├── middlewares/
+│   │   └── authMiddleware.js       # Middleware d'authentification JWT
+│   ├── models/                     # Modèles Sequelize
+│   │   ├── index.js
+│   │   ├── Utilisateur.js
+│   │   ├── Salle.js
+│   │   ├── Reservation.js
+│   │   └── Avi.js
+│   ├── routes/                     # Routes de l'API
+│   │   ├── auth.js
+│   │   ├── utilisateurs.js
+│   │   ├── salles.js
+│   │   ├── reservations.js
+│   │   ├── avis.js
+│   │   └── stats.js
+│   ├── utils/
+│   │   └── jwt.js                  # Utilitaires JWT
+│   ├── .env                        # Variables d'environnement (à créer)
 │   ├── package.json
 │   └── package-lock.json
 │
 ├── Frontend/
-│   └── (interface utilisateur)
+│   └── index.html                  # Interface de test des API
 │
 └── README.md
 ```
 
 ---
+## Telecharger le zip depuis le lien github.
 
 ## Installation du Backend
 
