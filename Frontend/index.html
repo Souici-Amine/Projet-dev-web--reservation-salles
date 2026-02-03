@@ -631,6 +631,7 @@
       const API_URL = "http://localhost:3000";
       let token = localStorage.getItem("token");
       let userRole = localStorage.getItem("userRole");
+      let userEmail = localStorage.getItem("userEmail");
 
       // Update UI on page load
       window.addEventListener("load", () => {
@@ -660,7 +661,7 @@
             proprietaire: "🏢",
             administrateur: "👨‍💼",
           };
-          roleBadge.textContent = `${roleEmoji[userRole] || ""} Rôle: ${userRole}`;
+          roleBadge.textContent = `Bonjour ${userEmail} | ${roleEmoji[userRole] || ""} Rôle: ${userRole}`;
         } else {
           tokenInfo.classList.remove("active");
         }
@@ -712,8 +713,10 @@
           if (response.ok) {
             token = data.token;
             userRole = data.user.role;
+            userEmail = data.user.email;
             localStorage.setItem("token", token);
             localStorage.setItem("userRole", userRole);
+            localStorage.setItem("userEmail", userEmail);
             updateAuthUI();
             filterEndpointsByRole();
             document.getElementById("regNom").value = "";
@@ -748,8 +751,10 @@
           if (response.ok) {
             token = data.token;
             userRole = data.user.role;
+            const userEmail = data.user.email;
             localStorage.setItem("token", token);
             localStorage.setItem("userRole", userRole);
+            localStorage.setItem("userEmail", userEmail);
             updateAuthUI();
             filterEndpointsByRole();
             document.getElementById("loginEmail").value = "";
@@ -763,8 +768,10 @@
       function logout() {
         token = null;
         userRole = null;
+        userEmail = null;
         localStorage.removeItem("token");
         localStorage.removeItem("userRole");
+        localStorage.removeItem("userEmail");
         updateAuthUI();
         filterEndpointsByRole();
         alert("Déconnecté avec succès");
