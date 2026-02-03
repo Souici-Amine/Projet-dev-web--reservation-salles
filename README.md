@@ -89,8 +89,11 @@ Dans le dossier `BackEnd`, créer un fichier nommé `.env` contenant :
 
 
 DB_NAME=reservation_salle_bdd
+
 DB_USER=root
+
 DB_PASSWORD=mot_de_passe_mysql
+
 DB_HOST=localhost
 
 
