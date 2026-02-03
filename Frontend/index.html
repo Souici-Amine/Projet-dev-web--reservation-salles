@@ -351,6 +351,7 @@
           <h2>👥 Utilisateurs</h2>
           <div
             class="endpoint"
+            data-role="administrateur"
             onclick="testEndpoint('/api/utilisateurs', 'GET')"
           >
             <div class="endpoint-header">
@@ -358,19 +359,21 @@
               <span class="endpoint-path">/api/utilisateurs</span>
             </div>
             <div class="endpoint-details">
-              <p>Récupérer tous les utilisateurs</p>
+              <p>Récupérer tous les utilisateurs (Admin uniquement)</p>
             </div>
           </div>
           <div
             class="endpoint"
-            onclick="testEndpoint('/api/utilisateurs/1', 'GET')"
+            data-role="administrateur"
+            onclick="testEndpoint('/api/utilisateurs/1/status', 'PATCH')"
+            style="display: none"
           >
             <div class="endpoint-header">
-              <span class="method get">GET</span>
-              <span class="endpoint-path">/api/utilisateurs/:id</span>
+              <span class="method put">PATCH</span>
+              <span class="endpoint-path">/api/utilisateurs/:id/status</span>
             </div>
             <div class="endpoint-details">
-              <p>Récupérer un utilisateur par ID</p>
+              <p>Activer/Désactiver un utilisateur (Admin uniquement)</p>
             </div>
           </div>
         </div>
@@ -378,22 +381,85 @@
         <!-- Salles Endpoints -->
         <div class="endpoint-category">
           <h2>🏛️ Salles</h2>
-          <div class="endpoint" onclick="testEndpoint('/api/salles', 'GET')">
+          <div
+            class="endpoint"
+            data-role="public"
+            onclick="testEndpoint('/api/salles', 'GET')"
+          >
             <div class="endpoint-header">
               <span class="method get">GET</span>
               <span class="endpoint-path">/api/salles</span>
             </div>
             <div class="endpoint-details">
-              <p>Récupérer toutes les salles disponibles</p>
+              <p>Récupérer toutes les salles (Filtrage disponible)</p>
             </div>
           </div>
-          <div class="endpoint" onclick="testEndpoint('/api/salles/1', 'GET')">
+          <div
+            class="endpoint"
+            data-role="public"
+            onclick="testEndpoint('/api/salles/disponibles/all', 'GET')"
+          >
+            <div class="endpoint-header">
+              <span class="method get">GET</span>
+              <span class="endpoint-path">/api/salles/disponibles/all</span>
+            </div>
+            <div class="endpoint-details">
+              <p>Salles disponibles maintenant</p>
+            </div>
+          </div>
+          <div
+            class="endpoint"
+            data-role="public"
+            onclick="testEndpoint('/api/salles/1', 'GET')"
+          >
             <div class="endpoint-header">
               <span class="method get">GET</span>
               <span class="endpoint-path">/api/salles/:id</span>
             </div>
             <div class="endpoint-details">
               <p>Récupérer une salle par ID</p>
+            </div>
+          </div>
+          <div
+            class="endpoint"
+            data-role="proprietaire"
+            style="display: none"
+            onclick="testEndpoint('/api/salles', 'POST')"
+          >
+            <div class="endpoint-header">
+              <span class="method post">POST</span>
+              <span class="endpoint-path">/api/salles</span>
+            </div>
+            <div class="endpoint-details">
+              <p>Ajouter une nouvelle salle (Propriétaire uniquement)</p>
+            </div>
+          </div>
+          <div
+            class="endpoint"
+            data-role="proprietaire"
+            style="display: none"
+            onclick="testEndpoint('/api/salles/1', 'PUT')"
+          >
+            <div class="endpoint-header">
+              <span class="method put">PUT</span>
+              <span class="endpoint-path">/api/salles/:id</span>
+            </div>
+            <div class="endpoint-details">
+              <p>Modifier une salle (Propriétaire uniquement)</p>
+            </div>
+          </div>
+          <div
+            class="endpoint"
+            data-role="proprietaire"
+            style="display: none"
+            onclick="testEndpoint('/api/salles/1', 'DELETE')"
+          >
+            <div class="endpoint-header">
+              <span class="method delete">DELETE</span>
+              <span class="endpoint-path">/api/salles/:id</span>
+            </div>
+            <div class="endpoint-details">
+              <p>Supprimer une salle (Propriétaire uniquement)</p>
             </div>
           </div>
         </div>
@@ -403,26 +469,46 @@
           <h2>📅 Réservations</h2>
           <div
             class="endpoint"
-            onclick="testEndpoint('/api/reservations', 'GET')"
+            data-role="client"
+            style="display: none"
+            onclick="testEndpoint('/api/reservations', 'POST')"
           >
             <div class="endpoint-header">
-              <span class="method get">GET</span>
+              <span class="method post">POST</span>
               <span class="endpoint-path">/api/reservations</span>
             </div>
             <div class="endpoint-details">
-              <p>Récupérer toutes les réservations</p>
+              <p>Créer une réservation (Client uniquement)</p>
             </div>
           </div>
           <div
             class="endpoint"
-            onclick="testEndpoint('/api/reservations/1', 'GET')"
+            data-role="client"
+            style="display: none"
+            onclick="testEndpoint('/api/reservations/utilisateur/1', 'GET')"
           >
             <div class="endpoint-header">
               <span class="method get">GET</span>
+              <span class="endpoint-path"
+                >/api/reservations/utilisateur/:id</span
+              >
+            </div>
+            <div class="endpoint-details">
+              <p>Consulter mes réservations (Client uniquement)</p>
+            </div>
+          </div>
+          <div
+            class="endpoint"
+            data-role="client"
+            style="display: none"
+            onclick="testEndpoint('/api/reservations/1', 'DELETE')"
+          >
+            <div class="endpoint-header">
+              <span class="method delete">DELETE</span>
               <span class="endpoint-path">/api/reservations/:id</span>
             </div>
             <div class="endpoint-details">
-              <p>Récupérer une réservation par ID</p>
+              <p>Annuler une réservation (Client uniquement)</p>
             </div>
           </div>
         </div>
@@ -430,7 +516,11 @@
         <!-- Avis Endpoints -->
         <div class="endpoint-category">
           <h2>⭐ Avis et Commentaires</h2>
-          <div class="endpoint" onclick="testEndpoint('/api/avis', 'GET')">
+          <div
+            class="endpoint"
+            data-role="public"
+            onclick="testEndpoint('/api/avis', 'GET')"
+          >
             <div class="endpoint-header">
               <span class="method get">GET</span>
               <span class="endpoint-path">/api/avis</span>
@@ -439,13 +529,59 @@
               <p>Récupérer tous les avis</p>
             </div>
           </div>
-          <div class="endpoint" onclick="testEndpoint('/api/avis/1', 'GET')">
+          <div
+            class="endpoint"
+            data-role="public"
+            onclick="testEndpoint('/api/avis/salle/1', 'GET')"
+          >
             <div class="endpoint-header">
               <span class="method get">GET</span>
+              <span class="endpoint-path">/api/avis/salle/:id</span>
+            </div>
+            <div class="endpoint-details">
+              <p>Avis pour une salle spécifique</p>
+            </div>
+          </div>
+          <div
+            class="endpoint"
+            data-role="client"
+            style="display: none"
+            onclick="testEndpoint('/api/avis', 'POST')"
+          >
+            <div class="endpoint-header">
+              <span class="method post">POST</span>
+              <span class="endpoint-path">/api/avis</span>
+            </div>
+            <div class="endpoint-details">
+              <p>Laisser un avis (Client uniquement)</p>
+            </div>
+          </div>
+          <div
+            class="endpoint"
+            data-role="client"
+            style="display: none"
+            onclick="testEndpoint('/api/avis/1', 'PUT')"
+          >
+            <div class="endpoint-header">
+              <span class="method put">PUT</span>
               <span class="endpoint-path">/api/avis/:id</span>
             </div>
             <div class="endpoint-details">
-              <p>Récupérer un avis par ID</p>
+              <p>Modifier mon avis (Client uniquement)</p>
+            </div>
+          </div>
+          <div
+            class="endpoint"
+            data-role="client"
+            style="display: none"
+            onclick="testEndpoint('/api/avis/1', 'DELETE')"
+          >
+            <div class="endpoint-header">
+              <span class="method delete">DELETE</span>
+              <span class="endpoint-path">/api/avis/:id</span>
+            </div>
+            <div class="endpoint-details">
+              <p>Supprimer mon avis (Client uniquement)</p>
             </div>
           </div>
         </div>
@@ -455,6 +591,8 @@
           <h2>📊 Statistiques</h2>
           <div
             class="endpoint"
+            data-role="administrateur"
+            style="display: none"
             onclick="testEndpoint('/api/stats/global', 'GET')"
           >
             <div class="endpoint-header">
@@ -462,7 +600,21 @@
               <span class="endpoint-path">/api/stats/global</span>
             </div>
             <div class="endpoint-details">
-              <p>Récupérer les statistiques globales</p>
+              <p>Statistiques globales (Admin uniquement)</p>
+            </div>
+          </div>
+          <div
+            class="endpoint"
+            data-role="proprietaire"
+            style="display: none"
+            onclick="testEndpoint('/api/stats/proprietaire/1', 'GET')"
+          >
+            <div class="endpoint-header">
+              <span class="method get">GET</span>
+              <span class="endpoint-path">/api/stats/proprietaire/:id</span>
+            </div>
+            <div class="endpoint-details">
+              <p>Mes statistiques (Propriétaire uniquement)</p>
             </div>
           </div>
         </div>
@@ -478,19 +630,61 @@
     <script>
       const API_URL = "http://localhost:3000";
       let token = localStorage.getItem("token");
+      let userRole = localStorage.getItem("userRole");
 
       // Update UI on page load
       window.addEventListener("load", () => {
         updateAuthUI();
+        filterEndpointsByRole();
       });
 
       function updateAuthUI() {
+        const tokenInfo = document.getElementById("tokenInfo");
         if (token) {
-          document.getElementById("tokenInfo").classList.add("active");
+          tokenInfo.classList.add("active");
           document.getElementById("tokenDisplay").textContent = token;
+
+          // Show role badge
+          let roleBadge = document.getElementById("roleBadge");
+          if (!roleBadge) {
+            roleBadge = document.createElement("p");
+            roleBadge.id = "roleBadge";
+            roleBadge.style.marginTop = "10px";
+            roleBadge.style.fontSize = "0.95em";
+            roleBadge.style.color = "#667eea";
+            roleBadge.style.fontWeight = "bold";
+            tokenInfo.appendChild(roleBadge);
+          }
+          const roleEmoji = {
+            client: "👤",
+            proprietaire: "🏢",
+            administrateur: "👨‍💼",
+          };
+          roleBadge.textContent = `${roleEmoji[userRole] || ""} Rôle: ${userRole}`;
         } else {
-          document.getElementById("tokenInfo").classList.remove("active");
+          tokenInfo.classList.remove("active");
         }
+      }
+
+      function filterEndpointsByRole() {
+        if (!token) {
+          // Show only public endpoints for visitors
+          showEndpointsByRole(["public"]);
+        } else {
+          showEndpointsByRole(["public", userRole]);
+        }
+      }
+
+      function showEndpointsByRole(allowedRoles) {
+        const endpoints = document.querySelectorAll("[data-role]");
+        endpoints.forEach((endpoint) => {
+          const role = endpoint.getAttribute("data-role");
+          if (allowedRoles.includes(role)) {
+            endpoint.style.display = "block";
+          } else {
+            endpoint.style.display = "none";
+          }
+        });
       }
 
       async function register() {
@@ -517,8 +711,11 @@
 
           if (response.ok) {
             token = data.token;
+            userRole = data.user.role;
             localStorage.setItem("token", token);
+            localStorage.setItem("userRole", userRole);
             updateAuthUI();
+            filterEndpointsByRole();
             document.getElementById("regNom").value = "";
             document.getElementById("regPrenom").value = "";
             document.getElementById("regEmail").value = "";
@@ -550,8 +747,11 @@
 
           if (response.ok) {
             token = data.token;
+            userRole = data.user.role;
             localStorage.setItem("token", token);
+            localStorage.setItem("userRole", userRole);
             updateAuthUI();
+            filterEndpointsByRole();
             document.getElementById("loginEmail").value = "";
             document.getElementById("loginPassword").value = "";
           }
@@ -562,8 +762,11 @@
 
       function logout() {
         token = null;
+        userRole = null;
         localStorage.removeItem("token");
+        localStorage.removeItem("userRole");
         updateAuthUI();
+        filterEndpointsByRole();
         alert("Déconnecté avec succès");
       }
 
