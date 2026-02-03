@@ -134,12 +134,17 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 });
 
-// UPDATE salle - Proprietaire only
+// UPDATE salle - Proprietaire only (own salles) or Admin
 router.put('/:id', authMiddleware, async (req, res) => {
     try {
         const salle = await Salle.findByPk(req.params.id);
         if (!salle) {
             return res.status(404).json({ error: 'Salle non trouvée' });
+        }
+
+        // Check ownership: proprietaire can only modify their own salles
+        if (req.user.role === 'proprietaire' && salle.proprietaireId !== req.user.id) {
+            return res.status(403).json({ error: 'Accès refusé - Vous ne pouvez modifier que vos propres salles' });
         }
 
         const { nom, descrption, capacite, prix, adresse, proprietaireId } = req.body;
@@ -159,12 +164,17 @@ router.put('/:id', authMiddleware, async (req, res) => {
     }
 });
 
-// DELETE salle - Proprietaire or Admin
+// DELETE salle - Proprietaire (own salles only) or Admin
 router.delete('/:id', authMiddleware, async (req, res) => {
     try {
         const salle = await Salle.findByPk(req.params.id);
         if (!salle) {
             return res.status(404).json({ error: 'Salle non trouvée' });
+        }
+
+        // Check ownership: proprietaire can only delete their own salles
+        if (req.user.role === 'proprietaire' && salle.proprietaireId !== req.user.id) {
+            return res.status(403).json({ error: 'Accès refusé - Vous ne pouvez supprimer que vos propres salles' });
         }
 
         await salle.destroy();
