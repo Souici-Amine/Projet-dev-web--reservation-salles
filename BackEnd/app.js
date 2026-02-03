@@ -21,6 +21,12 @@ app.use('/api/salles', sallesRouter);
 app.use('/api/stats', statsRouter);
 app.use('/api/utilisateurs', utilisateursRouter);
 
+//sync database
+const { sequelize } = require("./models");
+
+sequelize.sync({ alter: true })
+    .then(() => console.log("DB synced"))
+    .catch(console.error);
 
 
 
