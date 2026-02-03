@@ -15,7 +15,7 @@ Le projet est composé de deux parties :
 Avant d’exécuter le projet, il est nécessaire d’avoir installé sur la machine :
 
 - **Node.js** (version 18 ou supérieure recommandée)
-- **MySQL Server** (version 8.0.45)
+- **MySQL Server** (version 8.0.45) (lien: "https://dev.mysql.com/downloads/installer/")
 - Un terminal (CMD, PowerShell ou Terminal) ou un IDE comme VScode.
 
 ---
