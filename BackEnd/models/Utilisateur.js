@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const bcrypt = require('bcryptjs');
 
 const Utilisateur = sequelize.define('Utilisateur', {
     id: {
@@ -27,17 +28,15 @@ const Utilisateur = sequelize.define('Utilisateur', {
     role: {
         type: DataTypes.ENUM('client', 'proprietaire', 'administrateur'),
         allowNull: false
-    },
+    }
+}, {
+    tableName: 'utilisateurs',
+    timestamps: false,
     hooks: {
         beforeCreate: async (user) => {
             user.mot_de_passe = await bcrypt.hash(user.mot_de_passe, 10);
         }
     }
-
-
-}, {
-    tableName: 'utilisateurs',
-    timestamps: false
 });
 
 module.exports = Utilisateur;
