@@ -137,6 +137,19 @@ node app.js
 
 Si la configuration est correcte, le serveur démarre et l’API est accessible.
 
+## Si vous souhaitez remplir les tables de la base de données avec des données de test:
+
+exécutez « seed.js » avec « node seed.js », puis redémarrez le serveur avec « node app.js ».
+
+voici les emails et mot de passes:
+
+admin@example.com / Admin123!
+
+proprietaire@example.com / Prop123!
+
+client@example.com / Client123!
+
+
 Lancer maintenent index.html dans /Frontend.
 
 Vous pouvez maintenant remplir la base de données à l'aide de l'interface et tester toutes les fonctionnalités.
