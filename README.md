@@ -89,7 +89,7 @@ Aucune installation manuelle des bibliothèques n’est nécessaire.
 
 ### 1- Lancer MySQL Server
 
-S’assurer que le serveur MySQL est en cours d’exécution.
+Lancez MySQL, faites défiler (scroll) vers le bas jusqu'à « Connexions MySQL », cliquez sur l'instance locale et saisissez votre mot de passe d'installation.
 
 ---
 
