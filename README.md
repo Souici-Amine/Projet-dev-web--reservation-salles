@@ -43,7 +43,7 @@ Projet/
 
 ## Installation du Backend
 
-### 1️⃣ Accéder au dossier backend
+### 1- Accéder au dossier backend
 
 Ouvrir un terminal et se placer dans le dossier backend :
 
@@ -53,7 +53,7 @@ cd BackEnd
 
 
 
-### 2️⃣ Installer les dépendances
+### 2- Installer les dépendances
 
 
 npm install
@@ -67,13 +67,13 @@ Aucune installation manuelle des bibliothèques n’est nécessaire.
 
 ## Configuration de la base de données MySQL
 
-### 1️⃣ Lancer MySQL Server
+### 1- Lancer MySQL Server
 
 S’assurer que le serveur MySQL est en cours d’exécution.
 
 ---
 
-### 2️⃣ Créer la base de données
+### 2- Créer la base de données
 
 Dans MySQL, exécuter la commande suivante :
 
@@ -83,7 +83,7 @@ CREATE DATABASE reservation_salle_bdd;
 
 
 
-### 3️⃣ Créer le fichier `.env`
+### 3- Créer le fichier `.env`
 
 Dans le dossier `BackEnd`, créer un fichier nommé `.env` contenant :
 
@@ -94,7 +94,7 @@ DB_PASSWORD=mot_de_passe_mysql
 DB_HOST=localhost
 
 
-> ⚠️ Le fichier `.env` n’est pas inclus dans le dépôt GitHub pour des raisons de sécurité.  
+> **Le fichier `.env` n’est pas inclus dans le dépôt GitHub pour des raisons de sécurité.  
 > Il doit être créé localement.
 
 ---
