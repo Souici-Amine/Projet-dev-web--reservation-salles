@@ -112,7 +112,7 @@ DB_NAME=reservation_salle_bdd
 
 DB_USER=root
 
-DB_PASSWORD=mot_de_passe_mysql(votre mot de passe lors de l'installation du MySQL)
+DB_PASSWORD=mot_de_passe_mysql *(votre mot de passe lors de l'installation du MySQL)*
 
 DB_HOST=localhost
 
