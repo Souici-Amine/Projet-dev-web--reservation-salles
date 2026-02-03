@@ -18,6 +18,10 @@ module.exports = async (req, res, next) => {
       return res.status(401).json({ message: "User not found" });
     }
 
+    if (user.isActive === false) {
+      return res.status(403).json({ message: "User is inactive" });
+    }
+
     req.user = user; //  important
     next();
   } catch (err) {
