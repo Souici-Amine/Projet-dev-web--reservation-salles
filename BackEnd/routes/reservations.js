@@ -26,9 +26,13 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// CREATE new reservation - Client only
+// CREATE new reservation - Client, Proprietaire, Admin
 router.post('/', authMiddleware, async (req, res) => {
     try {
+        if (!['client', 'proprietaire', 'administrateur'].includes(req.user.role)) {
+            return res.status(403).json({ error: 'Accès refusé' });
+        }
+
         const { date_debut, date_fin, utilisateurId, salleId } = req.body;
 
         // Validate required fields
@@ -50,11 +54,11 @@ router.post('/', authMiddleware, async (req, res) => {
 
 
 
-// DELETE (cancel) reservation - Client only
+// DELETE (cancel) reservation - Client, Proprietaire, Admin
 router.delete('/:id', authMiddleware, async (req, res) => {
     try {
-        if (req.user.role !== 'client') {
-            return res.status(403).json({ error: 'Accès refusé - Client uniquement' });
+        if (!['client', 'proprietaire', 'administrateur'].includes(req.user.role)) {
+            return res.status(403).json({ error: 'Accès refusé' });
         }
 
         const reservation = await Reservation.findByPk(req.params.id);
@@ -63,7 +67,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
         }
 
         // Check if user owns this reservation
-        if (reservation.utilisateurId !== req.user.id) {
+        if (req.user.role !== 'administrateur' && reservation.utilisateurId !== req.user.id) {
             return res.status(403).json({ error: 'Vous pouvez annuler que vos réservations' });
         }
 
@@ -74,15 +78,15 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     }
 });
 
-// GET reservations by user ID - Client only
+// GET reservations by user ID - Client, Proprietaire, Admin
 router.get('/utilisateur/:utilisateurId', authMiddleware, async (req, res) => {
     try {
-        if (req.user.role !== 'client') {
-            return res.status(403).json({ error: 'Accès refusé - Client uniquement' });
+        if (!['client', 'proprietaire', 'administrateur'].includes(req.user.role)) {
+            return res.status(403).json({ error: 'Accès refusé' });
         }
 
         // Check if user is viewing their own reservations
-        if (parseInt(req.params.utilisateurId) !== req.user.id) {
+        if (req.user.role !== 'administrateur' && parseInt(req.params.utilisateurId) !== req.user.id) {
             return res.status(403).json({ error: 'Vous pouvez consulter que vos réservations' });
         }
         const reservations = await Reservation.findAll({

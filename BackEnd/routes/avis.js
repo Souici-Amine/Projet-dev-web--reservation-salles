@@ -26,9 +26,13 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// CREATE new avis - Client only
+// CREATE new avis - Client, Proprietaire, Admin
 router.post('/', authMiddleware, async (req, res) => {
     try {
+        if (!['client', 'proprietaire', 'administrateur'].includes(req.user.role)) {
+            return res.status(403).json({ error: 'Accès refusé' });
+        }
+
         const { note, commentaire, utilisateurId, salleId } = req.body;
 
         // Validate required fields
@@ -53,12 +57,21 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 });
 
-// UPDATE avis - Client only
+// UPDATE avis - Client, Proprietaire, Admin
 router.put('/:id', authMiddleware, async (req, res) => {
     try {
+        if (!['client', 'proprietaire', 'administrateur'].includes(req.user.role)) {
+            return res.status(403).json({ error: 'Accès refusé' });
+        }
+
         const avi = await Avis.findByPk(req.params.id);
         if (!avi) {
             return res.status(404).json({ error: 'Avis non trouvé' });
+        }
+
+        // Check if user owns this avis (or is admin)
+        if (req.user.role !== 'administrateur' && avi.utilisateurId !== req.user.id) {
+            return res.status(403).json({ error: 'Vous pouvez modifier que vos avis' });
         }
 
         const { note, commentaire } = req.body;
