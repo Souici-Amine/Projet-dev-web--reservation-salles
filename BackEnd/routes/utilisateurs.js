@@ -12,25 +12,18 @@ router.get('/', async (req, res) => {
     }
 });
 
-
-
-router.post('/', async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
-        const { nom, prenom, email, mot_de_passe, role } = req.body;
-        const newUser = await Utilisateur.create({
-            nom,
-            prenom,
-            email,
-            mot_de_passe,
-            role
-        });
-        res.status(201).json(newUser);
+        const user = await Utilisateur.findByPk(req.params.id);
+        if (!user) {
+            return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        }
+        res.json(user);
     }
     catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
-
 
 
 
