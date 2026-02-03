@@ -137,6 +137,8 @@ node app.js
 
 Si la configuration est correcte, le serveur démarre et l’API est accessible.
 
+Lancer maintenent index.html dans /Frontend
+
 ---
 
 ## Technologies utilisées
