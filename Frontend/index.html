@@ -751,7 +751,7 @@
           if (response.ok) {
             token = data.token;
             userRole = data.user.role;
-            const userEmail = data.user.email;
+            userEmail = data.user.email;
             localStorage.setItem("token", token);
             localStorage.setItem("userRole", userRole);
             localStorage.setItem("userEmail", userEmail);
