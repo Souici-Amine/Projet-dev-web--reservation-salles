@@ -14,6 +14,25 @@ router.get('/', async (req, res) => {
 
 
 
+router.post('/', async (req, res) => {
+    try {
+        const { nom, prenom, email, mot_de_passe, role } = req.body;
+        const newUser = await Utilisateur.create({
+            nom,
+            prenom,
+            email,
+            mot_de_passe,
+            role
+        });
+        res.status(201).json(newUser);
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
 
 
 
