@@ -99,6 +99,7 @@ Dans MySQL, exécuter la commande suivante :
 
 
 CREATE DATABASE reservation_salle_bdd;
+USE reservation_salle_bdd;
 
 
 
