@@ -1,49 +1,570 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <div>
-      <label for="infoId">information</label>
-      <input type="text" id="infoId" />
-      <button onclick="sendInfo()">send</button>
-    </div>
-    <div id="res"></div>
-    <script>
-      const API_BASE = "http://localhost:3000";
-      const resDiv = document.getElementById("res");
-      function displayRes(results) {
-        resDiv.innerHTML = results;
-      }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plateforme de Réservation de Salles - API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-      async function getInfo() {
-        try {
-          const response = await fetch(`${API_BASE}/rooms/2`);
-          const info = await response.json();
-          displayRes(JSON.stringify(info));
-        } catch (error) {
-          displayRes("Error: " + error.message);
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
-      }
-      async function sendInfo() {
-        const infoInput = document.getElementById("infoId").value;
-        try {
-          const res = await fetch(`${API_BASE}/test`, {
-            method: "POST",
-            headers: {
-              "content-type": "application/json",
-            },
-            body: JSON.stringify({ info: infoInput }),
-          });
-          const result = await res.json();
-          displayRes(JSON.stringify(result));
-        } catch (error) {
-          displayRes("Error: " + error.message);
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
         }
-      }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .auth-section {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .auth-forms {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group h3 {
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.2);
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #764ba2;
+        }
+
+        .token-info {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .token-info.active {
+            display: block;
+        }
+
+        .token-info p {
+            margin: 5px 0;
+            color: #2e7d32;
+        }
+
+        .endpoints-section {
+            padding: 30px;
+        }
+
+        .endpoint-category {
+            margin-bottom: 40px;
+        }
+
+        .endpoint-category h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .endpoint {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .endpoint:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transform: translateX(5px);
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .method {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.85em;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .method.get {
+            background: #4caf50;
+            color: white;
+        }
+
+        .method.post {
+            background: #2196f3;
+            color: white;
+        }
+
+        .method.put {
+            background: #ff9800;
+            color: white;
+        }
+
+        .method.delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            color: #333;
+            flex: 1;
+        }
+
+        .endpoint-details {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            display: none;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .endpoint.active .endpoint-details {
+            display: block;
+        }
+
+        .response-section {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .response-section.active {
+            display: block;
+        }
+
+        .response-section h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .response-code {
+            background: #333;
+            color: #4caf50;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .error {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            color: #c62828;
+        }
+
+        .success {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            color: #2e7d32;
+        }
+
+        @media (max-width: 768px) {
+            .auth-forms {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏢 Plateforme de Réservation de Salles</h1>
+            <p>Interface de Test des API - Similaire à JSONPlaceholder</p>
+        </header>
+
+        <div class="auth-section">
+            <h2 style="margin-bottom: 20px; color: #333;">🔐 Authentification</h2>
+            
+            <div class="auth-forms">
+                <!-- Register Form -->
+                <div class="form-group">
+                    <h3>📝 Inscription</h3>
+                    <input type="text" id="regNom" placeholder="Nom">
+                    <input type="text" id="regPrenom" placeholder="Prénom">
+                    <input type="email" id="regEmail" placeholder="Email">
+                    <input type="password" id="regPassword" placeholder="Mot de passe">
+                    <select id="regRole">
+                        <option value="client">Client</option>
+                        <option value="proprietaire">Propriétaire</option>
+                        <option value="administrateur">Administrateur</option>
+                    </select>
+                    <button onclick="register()">S'inscrire</button>
+                </div>
+
+                <!-- Login Form -->
+                <div class="form-group">
+                    <h3>🔑 Connexion</h3>
+                    <input type="email" id="loginEmail" placeholder="Email">
+                    <input type="password" id="loginPassword" placeholder="Mot de passe">
+                    <button onclick="login()">Se connecter</button>
+                </div>
+            </div>
+
+            <div id="tokenInfo" class="token-info">
+                <p><strong>✅ Connecté!</strong></p>
+                <p>Token: <code id="tokenDisplay" style="word-break: break-all; font-size: 0.85em;"></code></p>
+                <button onclick="logout()" style="margin-top: 10px; background: #f44336;">Se déconnecter</button>
+            </div>
+        </div>
+
+        <div class="endpoints-section">
+            <h2 style="margin-bottom: 30px; color: #333;">📡 Endpoints Disponibles</h2>
+
+            <!-- Auth Endpoints -->
+            <div class="endpoint-category">
+                <h2>🔐 Authentification</h2>
+                <div class="endpoint" onclick="toggleEndpoint(this)">
+                    <div class="endpoint-header">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/api/auth/register</span>
+                    </div>
+                    <div class="endpoint-details">
+                        <p>Créer un nouveau compte utilisateur</p>
+                    </div>
+                </div>
+                <div class="endpoint" onclick="toggleEndpoint(this)">
+                    <div class="endpoint-header">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/api/auth/login</span>
+                    </div>
+                    <div class="endpoint-details">
+                        <p>Se connecter et obtenir un token JWT</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Utilisateurs Endpoints -->
+            <div class="endpoint-category">
+                <h2>👥 Utilisateurs</h2>
+                <div class="endpoint" onclick="testEndpoint('/api/utilisateurs', 'GET')">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/api/utilisateurs</span>
+                    </div>
+                    <div class="endpoint-details">
+                        <p>Récupérer tous les utilisateurs</p>
+                    </div>
+                </div>
+                <div class="endpoint" onclick="testEndpoint('/api/utilisateurs/1', 'GET')">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/api/utilisateurs/:id</span>
+                    </div>
+                    <div class="endpoint-details">
+                        <p>Récupérer un utilisateur par ID</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Salles Endpoints -->
+            <div class="endpoint-category">
+                <h2>🏛️ Salles</h2>
+                <div class="endpoint" onclick="testEndpoint('/api/salles', 'GET')">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/api/salles</span>
+                    </div>
+                    <div class="endpoint-details">
+                        <p>Récupérer toutes les salles disponibles</p>
+                    </div>
+                </div>
+                <div class="endpoint" onclick="testEndpoint('/api/salles/1', 'GET')">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/api/salles/:id</span>
+                    </div>
+                    <div class="endpoint-details">
+                        <p>Récupérer une salle par ID</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reservations Endpoints -->
+            <div class="endpoint-category">
+                <h2>📅 Réservations</h2>
+                <div class="endpoint" onclick="testEndpoint('/api/reservations', 'GET')">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/api/reservations</span>
+                    </div>
+                    <div class="endpoint-details">
+                        <p>Récupérer toutes les réservations</p>
+                    </div>
+                </div>
+                <div class="endpoint" onclick="testEndpoint('/api/reservations/1', 'GET')">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/api/reservations/:id</span>
+                    </div>
+                    <div class="endpoint-details">
+                        <p>Récupérer une réservation par ID</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Avis Endpoints -->
+            <div class="endpoint-category">
+                <h2>⭐ Avis et Commentaires</h2>
+                <div class="endpoint" onclick="testEndpoint('/api/avis', 'GET')">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/api/avis</span>
+                    </div>
+                    <div class="endpoint-details">
+                        <p>Récupérer tous les avis</p>
+                    </div>
+                </div>
+                <div class="endpoint" onclick="testEndpoint('/api/avis/1', 'GET')">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/api/avis/:id</span>
+                    </div>
+                    <div class="endpoint-details">
+                        <p>Récupérer un avis par ID</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Endpoints -->
+            <div class="endpoint-category">
+                <h2>📊 Statistiques</h2>
+                <div class="endpoint" onclick="testEndpoint('/api/stats/global', 'GET')">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/api/stats/global</span>
+                    </div>
+                    <div class="endpoint-details">
+                        <p>Récupérer les statistiques globales</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Response Display -->
+            <div id="responseSection" class="response-section">
+                <h4>Réponse API:</h4>
+                <div id="responseCode" class="response-code"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+        let token = localStorage.getItem('token');
+
+        // Update UI on page load
+        window.addEventListener('load', () => {
+            updateAuthUI();
+        });
+
+        function updateAuthUI() {
+            if (token) {
+                document.getElementById('tokenInfo').classList.add('active');
+                document.getElementById('tokenDisplay').textContent = token;
+            } else {
+                document.getElementById('tokenInfo').classList.remove('active');
+            }
+        }
+
+        async function register() {
+            const nom = document.getElementById('regNom').value;
+            const prenom = document.getElementById('regPrenom').value;
+            const email = document.getElementById('regEmail').value;
+            const mot_de_passe = document.getElementById('regPassword').value;
+            const role = document.getElementById('regRole').value;
+
+            if (!nom || !prenom || !email || !mot_de_passe) {
+                alert('Veuillez remplir tous les champs');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nom, prenom, email, mot_de_passe, role })
+                });
+
+                const data = await response.json();
+                displayResponse(data, response.ok);
+
+                if (response.ok) {
+                    token = data.token;
+                    localStorage.setItem('token', token);
+                    updateAuthUI();
+                    document.getElementById('regNom').value = '';
+                    document.getElementById('regPrenom').value = '';
+                    document.getElementById('regEmail').value = '';
+                    document.getElementById('regPassword').value = '';
+                }
+            } catch (error) {
+                displayResponse({ error: error.message }, false);
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const mot_de_passe = document.getElementById('loginPassword').value;
+
+            if (!email || !mot_de_passe) {
+                alert('Veuillez remplir tous les champs');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, mot_de_passe })
+                });
+
+                const data = await response.json();
+                displayResponse(data, response.ok);
+
+                if (response.ok) {
+                    token = data.token;
+                    localStorage.setItem('token', token);
+                    updateAuthUI();
+                    document.getElementById('loginEmail').value = '';
+                    document.getElementById('loginPassword').value = '';
+                }
+            } catch (error) {
+                displayResponse({ error: error.message }, false);
+            }
+        }
+
+        function logout() {
+            token = null;
+            localStorage.removeItem('token');
+            updateAuthUI();
+            alert('Déconnecté avec succès');
+        }
+
+        async function testEndpoint(path, method) {
+            try {
+                const options = {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' }
+                };
+
+                if (token) {
+                    options.headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                const response = await fetch(`${API_URL}${path}`, options);
+                const data = await response.json();
+                displayResponse(data, response.ok);
+            } catch (error) {
+                displayResponse({ error: error.message }, false);
+            }
+        }
+
+        function displayResponse(data, success) {
+            const responseSection = document.getElementById('responseSection');
+            const responseCode = document.getElementById('responseCode');
+            
+            responseCode.textContent = JSON.stringify(data, null, 2);
+            responseSection.classList.add('active');
+            
+            if (success) {
+                responseCode.className = 'response-code success';
+            } else {
+                responseCode.className = 'response-code error';
+            }
+        }
+
+        function toggleEndpoint(element) {
+            element.classList.toggle('active');
+        }
     </script>
-  </body>
+</body>
 </html>
