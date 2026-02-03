@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const { Reservation, Salle, Avis, Utilisateur } = require('../models');
 const { Op } = require('sequelize');
+const authMiddleware = require('../middlewares/authMiddleware');
 
-// GET global statistics
-router.get('/global', async (req, res) => {
+// GET global statistics - Admin only
+router.get('/global', authMiddleware, async (req, res) => {
     try {
         const totalReservations = await Reservation.count();
         const totalSalles = await Salle.count();
@@ -39,8 +40,8 @@ router.get('/global', async (req, res) => {
     }
 });
 
-// GET statistics by proprietaire (owner)
-router.get('/proprietaire/:proprietaireId', async (req, res) => {
+// GET statistics by proprietaire (owner) - Proprietaire only
+router.get('/proprietaire/:proprietaireId', authMiddleware, async (req, res) => {
     try {
         const { proprietaireId } = req.params;
 

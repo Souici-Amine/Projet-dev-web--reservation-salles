@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Utilisateur = require('../models/Utilisateur');
+const authMiddleware = require('../middlewares/authMiddleware');
 
-router.get('/', async (req, res) => {
+// GET all users - Admin only
+router.get('/', authMiddleware, async (req, res) => {
     try {
         const users = await Utilisateur.findAll();
         res.json(users);
@@ -25,26 +27,15 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
-    try {
-        const { nom, prenom, email, mot_de_passe, role } = req.body;
-        const newUser = await Utilisateur.create({
-            nom,
-            prenom,
-            email,
-            mot_de_passe,
-            role
-        });
-        res.status(201).json(newUser);
-    }
-    catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
 
-// Activate/Deactivate user (Admin only)
-router.patch('/:id/status', async (req, res) => {
+
+// Activate/Deactivate user - Admin only
+router.patch('/:id/status', authMiddleware, async (req, res) => {
     try {
+        if (req.user.role !== 'administrateur') {
+            return res.status(403).json({ error: 'Accès refusé - Admin uniquement' });
+        }
+
         const user = await Utilisateur.findByPk(req.params.id);
         if (!user) {
             return res.status(404).json({ error: 'Utilisateur non trouvé' });
@@ -65,12 +56,6 @@ router.patch('/:id/status', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-
-module.exports = router;
-
-
-
-
 
 
 

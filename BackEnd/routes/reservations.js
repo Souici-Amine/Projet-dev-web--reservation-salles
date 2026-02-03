@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Reservation } = require('../models');
+const authMiddleware = require('../middlewares/authMiddleware');
 
 // GET all reservations
 router.get('/', async (req, res) => {
@@ -25,8 +26,8 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// CREATE new reservation
-router.post('/', async (req, res) => {
+// CREATE new reservation - Client only
+router.post('/', authMiddleware, async (req, res) => {
     try {
         const { date_debut, date_fin, utilisateurId, salleId } = req.body;
 
@@ -47,33 +48,23 @@ router.post('/', async (req, res) => {
     }
 });
 
-// UPDATE reservation
-router.put('/:id', async (req, res) => {
+
+
+// DELETE (cancel) reservation - Client only
+router.delete('/:id', authMiddleware, async (req, res) => {
     try {
+        if (req.user.role !== 'client') {
+            return res.status(403).json({ error: 'Accès refusé - Client uniquement' });
+        }
+
         const reservation = await Reservation.findByPk(req.params.id);
         if (!reservation) {
             return res.status(404).json({ error: 'Réservation non trouvée' });
         }
 
-        const { date_debut, date_fin } = req.body;
-
-        await reservation.update({
-            date_debut: date_debut || reservation.date_debut,
-            date_fin: date_fin || reservation.date_fin
-        });
-
-        res.json(reservation);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// DELETE (cancel) reservation
-router.delete('/:id', async (req, res) => {
-    try {
-        const reservation = await Reservation.findByPk(req.params.id);
-        if (!reservation) {
-            return res.status(404).json({ error: 'Réservation non trouvée' });
+        // Check if user owns this reservation
+        if (reservation.utilisateurId !== req.user.id) {
+            return res.status(403).json({ error: 'Vous pouvez annuler que vos réservations' });
         }
 
         await reservation.destroy();
@@ -83,9 +74,17 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-// GET reservations by user ID
-router.get('/utilisateur/:utilisateurId', async (req, res) => {
+// GET reservations by user ID - Client only
+router.get('/utilisateur/:utilisateurId', authMiddleware, async (req, res) => {
     try {
+        if (req.user.role !== 'client') {
+            return res.status(403).json({ error: 'Accès refusé - Client uniquement' });
+        }
+
+        // Check if user is viewing their own reservations
+        if (parseInt(req.params.utilisateurId) !== req.user.id) {
+            return res.status(403).json({ error: 'Vous pouvez consulter que vos réservations' });
+        }
         const reservations = await Reservation.findAll({
             where: { utilisateurId: req.params.utilisateurId }
         });

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Salle, Reservation } = require('../models');
 const { Op } = require('sequelize');
+const authMiddleware = require('../middlewares/authMiddleware');
 
 // GET all salles with filtering and search
 router.get('/', async (req, res) => {
@@ -65,6 +66,37 @@ router.get('/', async (req, res) => {
     }
 });
 
+// GET available salles (available right now)
+router.get('/disponibles/all', async (req, res) => {
+    try {
+        const now = new Date();
+
+        // Get all salles that have a reservation covering the current moment
+        const unavailableSalleIds = await Reservation.findAll({
+            attributes: ['salleId'],
+            where: {
+                date_debut: { [Op.lte]: now },
+                date_fin: { [Op.gte]: now }
+            },
+            raw: true,
+            group: ['salleId']
+        });
+
+        const unavailableIds = unavailableSalleIds.map(r => r.salleId);
+
+        // Get all salles that are NOT currently reserved
+        const disponibleSalles = await Salle.findAll({
+            where: {
+                id: { [Op.notIn]: unavailableIds }
+            }
+        });
+
+        res.json(disponibleSalles);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // GET salle by ID
 router.get('/:id', async (req, res) => {
     try {
@@ -78,8 +110,8 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// CREATE new salle
-router.post('/', async (req, res) => {
+// CREATE new salle - Proprietaire only
+router.post('/', authMiddleware, async (req, res) => {
     try {
         const { nom, descrption, capacite, prix, adresse, proprietaireId } = req.body;
 
@@ -102,8 +134,8 @@ router.post('/', async (req, res) => {
     }
 });
 
-// UPDATE salle
-router.put('/:id', async (req, res) => {
+// UPDATE salle - Proprietaire only
+router.put('/:id', authMiddleware, async (req, res) => {
     try {
         const salle = await Salle.findByPk(req.params.id);
         if (!salle) {
@@ -127,8 +159,8 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// DELETE salle
-router.delete('/:id', async (req, res) => {
+// DELETE salle - Proprietaire or Admin
+router.delete('/:id', authMiddleware, async (req, res) => {
     try {
         const salle = await Salle.findByPk(req.params.id);
         if (!salle) {

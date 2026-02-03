@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Avis } = require('../models');
+const authMiddleware = require('../middlewares/authMiddleware');
 
 // GET all avis
 router.get('/', async (req, res) => {
@@ -25,8 +26,8 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// CREATE new avis
-router.post('/', async (req, res) => {
+// CREATE new avis - Client only
+router.post('/', authMiddleware, async (req, res) => {
     try {
         const { note, commentaire, utilisateurId, salleId } = req.body;
 
@@ -52,8 +53,8 @@ router.post('/', async (req, res) => {
     }
 });
 
-// UPDATE avis
-router.put('/:id', async (req, res) => {
+// UPDATE avis - Client only
+router.put('/:id', authMiddleware, async (req, res) => {
     try {
         const avi = await Avis.findByPk(req.params.id);
         if (!avi) {
@@ -78,8 +79,8 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// DELETE avis
-router.delete('/:id', async (req, res) => {
+// DELETE avis - Client or Admin
+router.delete('/:id', authMiddleware, async (req, res) => {
     try {
         const avi = await Avis.findByPk(req.params.id);
         if (!avi) {
