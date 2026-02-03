@@ -7,6 +7,90 @@ const authMiddleware = require('../middlewares/authMiddleware');
 // GET global statistics - Admin only
 router.get('/global', authMiddleware, async (req, res) => {
     try {
+        const { filterBy, id } = req.query;
+
+        // If filtering by salle
+        if (filterBy === 'salle' && id) {
+            const salle = await Salle.findByPk(id);
+            if (!salle) {
+                return res.status(404).json({ error: 'Salle non trouvée' });
+            }
+
+            const reservations = await Reservation.findAll({
+                where: { salleId: id }
+            });
+
+            const avis = await Avis.findAll({
+                where: { salleId: id }
+            });
+
+            const totalRevenue = (reservations.length * parseFloat(salle.prix)).toFixed(2);
+            const averageRating = avis.length > 0
+                ? (avis.reduce((sum, a) => sum + a.note, 0) / avis.length).toFixed(2)
+                : 0;
+
+            return res.json({
+                filterType: 'salle',
+                salleId: id,
+                salleName: salle.nom,
+                totalReservations: reservations.length,
+                totalRevenue,
+                totalAvis: avis.length,
+                averageRating,
+                prix: salle.prix,
+                capacite: salle.capacite
+            });
+        }
+
+        // If filtering by proprietaire
+        if (filterBy === 'proprietaire' && id) {
+            const salles = await Salle.findAll({
+                where: { proprietaireId: id }
+            });
+
+            if (salles.length === 0) {
+                return res.json({
+                    filterType: 'proprietaire',
+                    proprietaireId: id,
+                    totalSalles: 0,
+                    totalReservations: 0,
+                    totalRevenue: 0,
+                    totalAvis: 0,
+                    averageRating: 0
+                });
+            }
+
+            const salleIds = salles.map(s => s.id);
+
+            const reservations = await Reservation.findAll({
+                where: { salleId: { [Op.in]: salleIds } },
+                include: [{ model: Salle, attributes: ['prix'] }]
+            });
+
+            const totalRevenue = reservations.reduce((sum, res) => {
+                return sum + (res.Salle ? parseFloat(res.Salle.prix) : 0);
+            }, 0);
+
+            const avis = await Avis.findAll({
+                where: { salleId: { [Op.in]: salleIds } }
+            });
+
+            const averageRating = avis.length > 0
+                ? (avis.reduce((sum, a) => sum + a.note, 0) / avis.length).toFixed(2)
+                : 0;
+
+            return res.json({
+                filterType: 'proprietaire',
+                proprietaireId: id,
+                totalSalles: salles.length,
+                totalReservations: reservations.length,
+                totalRevenue: totalRevenue.toFixed(2),
+                totalAvis: avis.length,
+                averageRating
+            });
+        }
+
+        // Global stats (no filter)
         const totalReservations = await Reservation.count();
         const totalSalles = await Salle.count();
         const totalUsers = await Utilisateur.count();
@@ -38,7 +122,7 @@ router.get('/global', authMiddleware, async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});
+});;
 
 // GET statistics by proprietaire (owner) - Proprietaire only
 router.get('/proprietaire/:proprietaireId', authMiddleware, async (req, res) => {

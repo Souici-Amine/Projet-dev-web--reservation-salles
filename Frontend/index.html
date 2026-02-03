@@ -857,7 +857,6 @@
               class="endpoint"
               data-role="administrateur"
               style="display: none"
-              onclick="testEndpoint('/api/stats/global', 'GET')"
             >
               <div class="endpoint-header">
                 <span class="method get">GET</span>
@@ -865,6 +864,26 @@
               </div>
               <div class="endpoint-details">
                 <p>Statistiques globales (Admin uniquement)</p>
+                <div class="endpoint-form">
+                  <select data-query="filterBy" id="globalFilterType">
+                    <option value="">-- Sans filtre --</option>
+                    <option value="salle">Revenus par Salle</option>
+                    <option value="proprietaire">
+                      Revenus par Propriétaire
+                    </option>
+                  </select>
+                  <input
+                    type="number"
+                    id="globalFilterId"
+                    data-query="id"
+                    placeholder="ID Salle ou Propriétaire (si filtre sélectionné)"
+                  />
+                  <button
+                    onclick="submitGetEndpoint(this, '/api/stats/global')"
+                  >
+                    Voir Statistiques
+                  </button>
+                </div>
               </div>
             </div>
             <div
@@ -879,18 +898,22 @@
               <div class="endpoint-details">
                 <p>Mes statistiques (Propriétaire uniquement)</p>
                 <div class="endpoint-form">
+                  <select data-query="filterBy" id="propFilterType">
+                    <option value="">-- Toutes les salles --</option>
+                    <option value="salle">Revenus par Salle</option>
+                  </select>
                   <input
                     type="number"
-                    class="full"
-                    data-path-param="id"
-                    placeholder="ID propriétaire"
+                    id="propFilterId"
+                    data-query="salleId"
+                    placeholder="ID Salle (optionnel)"
                   />
                   <button
                     onclick="
                       submitGetEndpoint(this, '/api/stats/proprietaire/:id')
                     "
                   >
-                    Envoyer
+                    Voir Mes Statistiques
                   </button>
                 </div>
               </div>
@@ -912,6 +935,8 @@
       let userRole = localStorage.getItem("userRole");
       let userEmail = localStorage.getItem("userEmail");
       let userId = localStorage.getItem("userId");
+      let userNom = localStorage.getItem("userNom");
+      let userPrenom = localStorage.getItem("userPrenom");
 
       // Update UI on page load
       window.addEventListener("load", () => {
@@ -920,6 +945,11 @@
       });
 
       function updateAuthUI() {
+        userRole = localStorage.getItem("userRole");
+        userEmail = localStorage.getItem("userEmail");
+        userId = localStorage.getItem("userId");
+        userNom = localStorage.getItem("userNom");
+        userPrenom = localStorage.getItem("userPrenom");
         const tokenInfo = document.getElementById("tokenInfo");
         if (token) {
           tokenInfo.classList.add("active");
@@ -941,7 +971,12 @@
             proprietaire: "🏢",
             administrateur: "👨‍💼",
           };
-          roleBadge.textContent = `Bonjour ${userEmail} | ${roleEmoji[userRole] || ""} Rôle: ${userRole}`;
+          const fullName = [userPrenom, userNom].filter(Boolean).join(" ");
+          const displayName = fullName || userEmail || "Utilisateur";
+          const showEmail = Boolean(userEmail) && displayName !== userEmail;
+          const emailPart = showEmail ? ` (${userEmail})` : "";
+          const idPart = userId ? ` | ID: ${userId}` : "";
+          roleBadge.textContent = `Bonjour ${displayName}${emailPart}${idPart} | ${roleEmoji[userRole] || ""} Rôle: ${userRole}`;
         } else {
           tokenInfo.classList.remove("active");
         }
@@ -999,10 +1034,14 @@
             userRole = data.user.role;
             userEmail = data.user.email;
             userId = data.user.id;
+            userNom = data.user.nom;
+            userPrenom = data.user.prenom;
             localStorage.setItem("token", token);
             localStorage.setItem("userRole", userRole);
             localStorage.setItem("userEmail", userEmail);
             localStorage.setItem("userId", userId);
+            localStorage.setItem("userNom", userNom || "");
+            localStorage.setItem("userPrenom", userPrenom || "");
             updateAuthUI();
             filterEndpointsByRole();
             document.getElementById("regNom").value = "";
@@ -1039,10 +1078,14 @@
             userRole = data.user.role;
             userEmail = data.user.email;
             userId = data.user.id;
+            userNom = data.user.nom;
+            userPrenom = data.user.prenom;
             localStorage.setItem("token", token);
             localStorage.setItem("userRole", userRole);
             localStorage.setItem("userEmail", userEmail);
             localStorage.setItem("userId", userId);
+            localStorage.setItem("userNom", userNom || "");
+            localStorage.setItem("userPrenom", userPrenom || "");
             updateAuthUI();
             filterEndpointsByRole();
             document.getElementById("loginEmail").value = "";
@@ -1058,10 +1101,14 @@
         userRole = null;
         userEmail = null;
         userId = null;
+        userNom = null;
+        userPrenom = null;
         localStorage.removeItem("token");
         localStorage.removeItem("userRole");
         localStorage.removeItem("userEmail");
         localStorage.removeItem("userId");
+        localStorage.removeItem("userNom");
+        localStorage.removeItem("userPrenom");
         updateAuthUI();
         filterEndpointsByRole();
         alert("Déconnecté avec succès");
@@ -1152,6 +1199,17 @@
         // Auto-fill :id for reservations even without input field
         if (
           path === "/api/reservations/utilisateur/:id" &&
+          finalPath.includes(":id")
+        ) {
+          const storedUserId = localStorage.getItem("userId");
+          if (storedUserId) {
+            finalPath = finalPath.replace(":id", storedUserId);
+          }
+        }
+
+        // Auto-fill :id for proprietaire stats even without input field
+        if (
+          path === "/api/stats/proprietaire/:id" &&
           finalPath.includes(":id")
         ) {
           const storedUserId = localStorage.getItem("userId");

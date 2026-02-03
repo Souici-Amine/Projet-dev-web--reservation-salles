@@ -165,5 +165,7 @@ Vous pouvez maintenant remplir la base de données à l'aide de l'interface et t
 - JSON
 - JWT (pour l’authentification)
 
+ ## Schema de base de donnees peut etre consulter depuis l'image ou pdf "Diagramme de schema de la bdd"
+
 ---
 
