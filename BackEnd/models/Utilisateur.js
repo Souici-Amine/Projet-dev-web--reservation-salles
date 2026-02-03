@@ -28,6 +28,11 @@ const Utilisateur = sequelize.define('Utilisateur', {
     role: {
         type: DataTypes.ENUM('client', 'proprietaire', 'administrateur'),
         allowNull: false
+    },
+    isActive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+        allowNull: false
     }
 }, {
     tableName: 'utilisateurs',
