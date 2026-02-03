@@ -1,11 +1,64 @@
 const express = require('express');
 const router = express.Router();
-const { Salle } = require('../models');
+const { Salle, Reservation } = require('../models');
+const { Op } = require('sequelize');
 
-// GET all salles
+// GET all salles with filtering and search
 router.get('/', async (req, res) => {
     try {
-        const salles = await Salle.findAll();
+        const { search, capacite_min, capacite_max, prix_min, prix_max, date_debut, date_fin } = req.query;
+
+        let where = {};
+
+        // Search by name or description
+        if (search) {
+            where[Op.or] = [
+                { nom: { [Op.like]: `%${search}%` } },
+                { descrption: { [Op.like]: `%${search}%` } }
+            ];
+        }
+
+        // Filter by capacity
+        if (capacite_min) {
+            where.capacite = { [Op.gte]: parseInt(capacite_min) };
+        }
+        if (capacite_max) {
+            where.capacite = where.capacite || {};
+            where.capacite[Op.lte] = parseInt(capacite_max);
+        }
+
+        // Filter by price
+        if (prix_min) {
+            where.prix = { [Op.gte]: parseFloat(prix_min) };
+        }
+        if (prix_max) {
+            where.prix = where.prix || {};
+            where.prix[Op.lte] = parseFloat(prix_max);
+        }
+
+        let salles = await Salle.findAll({ where });
+
+        // Filter by date availability
+        if (date_debut && date_fin) {
+            const startDate = new Date(date_debut);
+            const endDate = new Date(date_fin);
+
+            salles = salles.filter(async (salle) => {
+                const conflictingReservations = await Reservation.findAll({
+                    where: {
+                        salleId: salle.id,
+                        [Op.or]: [
+                            {
+                                date_debut: { [Op.lt]: endDate },
+                                date_fin: { [Op.gt]: startDate }
+                            }
+                        ]
+                    }
+                });
+                return conflictingReservations.length === 0;
+            });
+        }
+
         res.json(salles);
     } catch (error) {
         res.status(500).json({ error: error.message });
