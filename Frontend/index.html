@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <label for="infoId">information</label>
+      <input type="text" id="infoId" />
+      <button onclick="sendInfo()">send</button>
+    </div>
+    <div id="res"></div>
+    <script>
+      const API_BASE = "http://localhost:3000";
+      const resDiv = document.getElementById("res");
+      function displayRes(results) {
+        resDiv.innerHTML = results;
+      }
+
+      async function getInfo() {
+        try {
+          const response = await fetch(`${API_BASE}/rooms/2`);
+          const info = await response.json();
+          displayRes(JSON.stringify(info));
+        } catch (error) {
+          displayRes("Error: " + error.message);
+        }
+      }
+      async function sendInfo() {
+        const infoInput = document.getElementById("infoId").value;
+        try {
+          const res = await fetch(`${API_BASE}/test`, {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify({ info: infoInput }),
+          });
+          const result = await res.json();
+          displayRes(JSON.stringify(result));
+        } catch (error) {
+          displayRes("Error: " + error.message);
+        }
+      }
+    </script>
+  </body>
+</html>

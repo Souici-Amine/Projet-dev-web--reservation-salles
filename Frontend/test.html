@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Manager - Frontend</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+
+      .container {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .section {
+        margin-bottom: 30px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+
+      h2 {
+        color: #3498db;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 5px;
+      }
+
+      .btn {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        margin: 5px;
+        transition: background-color 0.3s;
+      }
+
+      .btn:hover {
+        background-color: #2980b9;
+      }
+
+      .btn.delete {
+        background-color: #e74c3c;
+      }
+
+      .btn.delete:hover {
+        background-color: #c0392b;
+      }
+
+      .btn.success {
+        background-color: #2ecc71;
+      }
+
+      .btn.success:hover {
+        background-color: #27ae60;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .user-list {
+        list-style: none;
+        margin-top: 10px;
+      }
+
+      .user-item {
+        background: white;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-left: 4px solid #3498db;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      #result {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: #e8f4fc;
+        border-left: 4px solid #3498db;
+        min-height: 100px;
+        white-space: pre-wrap;
+        font-family: monospace;
+      }
+
+      .status {
+        padding: 5px 10px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: bold;
+        margin-left: 10px;
+      }
+
+      .status.success {
+        background-color: #d4edda;
+        color: #155724;
+      }
+
+      .status.error {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📡 User Manager - Frontend</h1>
+      <p style="text-align: center; margin-bottom: 30px; color: #666">
+        This frontend communicates with your Express backend using Fetch API
+      </p>
+
+      <!-- Section 1: Get All Users -->
+      <div class="section">
+        <h2>1. Get All Users</h2>
+        <p>Click to fetch all users from the backend</p>
+        <button class="btn" id="getAllBtn">Get All Users</button>
+        <ul class="user-list" id="userList"></ul>
+      </div>
+
+      <!-- Section 2: Get Single User -->
+      <div class="section">
+        <h2>2. Get Single User</h2>
+        <div class="form-group">
+          <label for="userId">User ID:</label>
+          <input
+            type="number"
+            id="userId"
+            placeholder="Enter user ID (1 or 2)"
+            min="1"
+          />
+        </div>
+        <button class="btn" id="getSingleBtn">Get User</button>
+      </div>
+
+      <!-- Section 3: Create New User -->
+      <div class="section">
+        <h2>3. Create New User</h2>
+        <div class="form-group">
+          <label for="newUserName">Name:</label>
+          <input type="text" id="newUserName" placeholder="Enter name" />
+        </div>
+        <div class="form-group">
+          <label for="newUserAge">Age:</label>
+          <input type="number" id="newUserAge" placeholder="Enter age" />
+        </div>
+        <button class="btn success" id="createUserBtn">Create User</button>
+      </div>
+
+      <!-- Section 4: Update User -->
+      <div class="section">
+        <h2>4. Update User</h2>
+        <div class="form-group">
+          <label for="updateUserId">User ID to Update:</label>
+          <input
+            type="number"
+            id="updateUserId"
+            placeholder="Enter user ID to update"
+          />
+        </div>
+        <div class="form-group">
+          <label for="updateUserName">New Name:</label>
+          <input type="text" id="updateUserName" placeholder="Enter new name" />
+        </div>
+        <div class="form-group">
+          <label for="updateUserAge">New Age:</label>
+          <input type="number" id="updateUserAge" placeholder="Enter new age" />
+        </div>
+        <button class="btn" id="updateUserBtn">Update User</button>
+      </div>
+
+      <!-- Section 5: Delete User -->
+      <div class="section">
+        <h2>5. Delete User</h2>
+        <div class="form-group">
+          <label for="deleteUserId">User ID to Delete:</label>
+          <input
+            type="number"
+            id="deleteUserId"
+            placeholder="Enter user ID to delete"
+          />
+        </div>
+        <button class="btn delete" id="deleteUserBtn">Delete User</button>
+      </div>
+
+      <!-- Results Display -->
+      <div class="section">
+        <h2>📤 API Response</h2>
+        <div id="result">Click buttons above to see responses here...</div>
+      </div>
+    </div>
+
+    <!-- JavaScript goes here -->
+    <script>
+      // All our frontend code will go here
+      // We'll write it step by step below
+    </script>
+  </body>
+</html>
