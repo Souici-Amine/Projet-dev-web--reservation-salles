@@ -75,6 +75,20 @@ Projet/
 
 ---
 
+## Documentation expliquant l'architecture du projet
+
+Cette section decrit l'architecture globale et la maniere dont les composants interagissent :
+
+- **API REST (BackEnd)** : expose les endpoints et orchestre la logique metier via les `controllers` et `services` (ici directement dans les controleurs).
+- **Persistance** : `models` centralise les entites Sequelize et leurs relations; la connexion est geree via `config/database.js`.
+- **Securite** : `middlewares` applique la verification JWT; `utils/jwt.js` gere la creation et la validation des tokens.
+- **Flux principal** : `routes` -> `controllers` -> `models` -> base MySQL; les reponses reviennent en JSON vers le Frontend.
+- **Frontend** : page statique qui consomme l'API via `fetch` pour tester rapidement les fonctionnalites.
+
+Cette separation facilite la maintenance, les tests et l'evolution du projet.
+
+---
+
 ## Étapes d’installation
 
 ### 1) Télécharger le projet
