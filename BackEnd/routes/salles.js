@@ -60,7 +60,10 @@ router.get('/', async (req, res) => {
             });
         }
 
-        res.json(salles);
+        res.json({
+            total: salles.length,
+            salles
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -91,7 +94,10 @@ router.get('/disponibles/all', async (req, res) => {
             }
         });
 
-        res.json(disponibleSalles);
+        res.json({
+            total: disponibleSalles.length,
+            salles: disponibleSalles
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

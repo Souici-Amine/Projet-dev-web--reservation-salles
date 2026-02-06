@@ -7,7 +7,10 @@ const authMiddleware = require('../middlewares/authMiddleware');
 router.get('/', authMiddleware, async (req, res) => {
     try {
         const users = await Utilisateur.findAll();
-        res.json(users);
+        res.json({
+            total: users.length,
+            users
+        });
     }
     catch (error) {
         res.status(500).json({ error: error.message });
