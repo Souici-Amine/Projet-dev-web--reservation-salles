@@ -1,4 +1,4 @@
-# Plateforme de réservation de salles
+# Plateforme de réservation de salles (Documentation)
 
 ## Description du projet
 
