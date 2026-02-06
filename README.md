@@ -1,4 +1,4 @@
-# Plateforme de réservation de salles
+# Plateforme de réservation de salles (Documentation)
 
 ## Description du projet
 
@@ -142,7 +142,7 @@ DB_NAME=reservation_salle_bdd
 DB_USER=root
 DB_PASSWORD=mot_de_passe_mysql # votre mot de passe MySQL(obtenu dans linstallation).
 DB_HOST=localhost
-JWT_SECRET=your_super_secret_key_here_change_this_in_production
+JWT_SECRET=secret_key #vous pouvez changer celui-ci.
 JWT_EXPIRES_IN=7d
 
 > \*\*Le fichier `.env` n’est pas inclus dans le dépôt GitHub pour des raisons de sécurité.
