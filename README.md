@@ -87,13 +87,13 @@ Ouvrez le dossier du projet dans VS Code.
 
 ## Installation du backend
 
-### 3) Accéder au dossier backend
+### 1) Accéder au dossier backend
 
 Dans VScode ouvrez un terminal et placez-vous dans le dossier backend :
 
 cd BackEnd
 
-### 4) Installer les dépendances
+### 2) Installer les dépendances
 
 Installez les dépendances du backend :
 
