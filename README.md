@@ -3,13 +3,14 @@
 ## Description du projet
 
 Ce projet est une plateforme de réservation de salles réalisée dans un cadre pédagogique.  
-Le backend est développé avec **Node.js**, **Express** et **MySQL**, en utilisant **Sequelize** comme ORM.  
-Le projet expose une **API REST** utilisant le format **JSON**.
+Le backend est développé avec **Node.js** et **Express**, connecté à **MySQL** via **Sequelize** (ORM) et sécurisé par **JWT**.  
+Le projet expose une **API REST** au format **JSON** (authentification, gestion des salles, réservations, avis, statistiques).  
+Le frontend est une interface simple en **HTML/CSS/JavaScript** qui permet de tester rapidement les endpoints de l’API, en utilisant `fetch` avec `async/await` pour les appels HTTP.
 
 Le projet est composé de deux parties :
 
-- **BackEnd** : API REST (Node.js + Express)
-- **FrontEnd** : interface utilisateur
+- **BackEnd** : API REST (Node.js + Express + Sequelize + MySQL + JWT)
+- **FrontEnd** : interface utilisateur en **HTML/CSS/JavaScript** (page de test des API)
 
 ---
 
@@ -19,7 +20,7 @@ Avant d’exécuter le projet, il est nécessaire d’avoir installé sur la mac
 
 - **Node.js** (version 18 ou supérieure recommandée)
 - **MySQL Server** (installation "Full") (version 8.0.45) (lien: "https://dev.mysql.com/downloads/installer/", -->2éme option, -->skip oracle login )
-  -un IDE comme VScode.
+- **un IDE comme VScode**.
 
 ---
 
@@ -60,6 +61,17 @@ Projet/
 │
 └── README.md
 ```
+
+### Pourquoi cette structure ?
+
+- **controllers/** : regroupe la logique métier et les actions sur les ressources (auth, salles, réservations, avis).
+- **routes/** : déclare les endpoints et relie chaque route au contrôleur correspondant.
+- **models/** : définit les modèles Sequelize et les relations entre les tables (source unique de vérité pour le schéma).
+- **middlewares/** : centralise les traitements transverses (ex. vérification JWT).
+- **config/** : isole la configuration de la base de données pour la rendre réutilisable et maintenable.
+- **utils/** : contient les fonctions utilitaires partagées (ex. génération/validation de JWT).
+- **BackEnd/** : contient l’API REST (logique serveur).
+- **Frontend/** : contient l’interface de test des API (fichier statique).
 
 ---
 
@@ -157,12 +169,20 @@ Vous pouvez maintenant utiliser l’interface pour remplir la base et tester les
 
 ## Technologies utilisées
 
+### Backend
+
 - Node.js
 - Express
 - MySQL
 - Sequelize (ORM)
 - JSON
-- JWT (pour l’authentification)
+- JWT (authentification)
+
+### Frontend
+
+- HTML
+- CSS
+- JavaScript
 
 ## Schema de base de donnees peut etre consulter depuis l'image ou pdf "Diagramme de schema de la bdd"
 
