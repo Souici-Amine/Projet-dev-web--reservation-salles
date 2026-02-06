@@ -7,7 +7,10 @@ const authMiddleware = require('../middlewares/authMiddleware');
 router.get('/', async (req, res) => {
     try {
         const avis = await Avis.findAll();
-        res.json(avis);
+        res.json({
+            total: avis.length,
+            avis
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -113,7 +116,10 @@ router.get('/salle/:salleId', async (req, res) => {
         const avis = await Avis.findAll({
             where: { salleId: req.params.salleId }
         });
-        res.json(avis);
+        res.json({
+            total: avis.length,
+            avis
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -125,7 +131,10 @@ router.get('/utilisateur/:utilisateurId', async (req, res) => {
         const avis = await Avis.findAll({
             where: { utilisateurId: req.params.utilisateurId }
         });
-        res.json(avis);
+        res.json({
+            total: avis.length,
+            avis
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

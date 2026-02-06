@@ -7,7 +7,10 @@ const authMiddleware = require('../middlewares/authMiddleware');
 router.get('/', async (req, res) => {
     try {
         const reservations = await Reservation.findAll();
-        res.json(reservations);
+        res.json({
+            total: reservations.length,
+            reservations
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
