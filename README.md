@@ -89,6 +89,32 @@ Cette separation facilite la maintenance, les tests et l'evolution du projet.
 
 ---
 
+---
+
+## Fonctionnalites par role
+
+Les fonctionnalites peuvent varier selon le profil utilisateur.
+
+### Administrateur
+
+- Gérer les utilisateurs (creation, modification, suppression).
+- Consulter les statistiques globales.
+- Superviser les salles, reservations et avis.
+
+### Proprietaire
+
+- Ajouter, modifier et supprimer ses salles.
+- Consulter les reservations liees a ses salles.
+- Gérer les avis associes a ses salles.
+
+### Client
+
+- Rechercher et consulter les salles disponibles.
+- Creer, modifier et annuler ses reservations.
+- Laisser un avis apres une reservation.
+
+---
+
 ## Étapes d’installation
 
 ### 1) Télécharger le projet
@@ -178,8 +204,6 @@ Comptes de test :
 Ouvrez [Frontend/index.html](Frontend/index.html) dans votre navigateur.
 
 Vous pouvez maintenant utiliser l’interface pour remplir la base et tester les fonctionnalités.
-
----
 
 ## Technologies utilisées
 
