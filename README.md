@@ -1,22 +1,25 @@
 # Plateforme de réservation de salles
 
 ## Description du projet
+
 Ce projet est une plateforme de réservation de salles réalisée dans un cadre pédagogique.  
 Le backend est développé avec **Node.js**, **Express** et **MySQL**, en utilisant **Sequelize** comme ORM.  
 Le projet expose une **API REST** utilisant le format **JSON**.
 
 Le projet est composé de deux parties :
+
 - **BackEnd** : API REST (Node.js + Express)
 - **FrontEnd** : interface utilisateur
 
 ---
 
 ## Prérequis
+
 Avant d’exécuter le projet, il est nécessaire d’avoir installé sur la machine :
 
 - **Node.js** (version 18 ou supérieure recommandée)
 - **MySQL Server** (installation "Full") (version 8.0.45) (lien: "https://dev.mysql.com/downloads/installer/", -->2éme option, -->skip oracle login )
-- Un terminal (CMD, PowerShell ou Terminal) ou un IDE comme VScode.
+  -un IDE comme VScode.
 
 ---
 
@@ -59,100 +62,96 @@ Projet/
 ```
 
 ---
-## Telecharger le zip depuis le lien github.
 
-## Installation du Backend
+## Étapes d’installation
 
-### 1- Accéder au dossier backend
+### 1) Télécharger le projet
 
-Ouvrir un terminal et se placer dans le dossier backend :
+Téléchargez le ZIP depuis GitHub puis extrayez-le.
 
+### 2) Ouvrir le projet
+
+Ouvrez le dossier du projet dans VS Code.
+
+## Installation du backend
+
+### 3) Accéder au dossier backend
+
+Dans VScode ouvrez un terminal et placez-vous dans le dossier backend :
 
 cd BackEnd
 
+### 4) Installer les dépendances
 
-
-
-### 2- Installer les dépendances
-
+Installez les dépendances du backend :
 
 npm install
 
-
-Les dépendances (Express, Sequelize, MySQL, CORS, etc.) sont automatiquement installées
-grâce au fichier `package.json`.  
-Aucune installation manuelle des bibliothèques n’est nécessaire.
+Les dépendances (Express, Sequelize, MySQL, CORS, etc.) sont automatiquement installées via le fichier `package.json`.
+Aucune installation manuelle n’est nécessaire.
 
 ---
 
 ## Configuration de la base de données MySQL
 
-### 1- Lancer MySQL Server
+### 1) Lancer MySQL Server
 
-Lancez MySQL Workbench, faites défiler (scroll) vers le bas jusqu'à « Connexions MySQL », cliquez sur l'instance locale et saisissez votre mot de passe d'installation.
+Ouvrez MySQL Workbench, faites défiler(scroll) jusqu’à « Connexions MySQL », cliquez sur l’instance locale puis saisissez votre mot de passe (obtenu dans linstallation).
 
 ---
 
-### 2- Créer la base de données
+### 2) Créer la base de données
 
-Dans MySQL, exécuter la commande suivante :
-
+Dans MySQL, exécutez :
 
 CREATE DATABASE reservation_salle_bdd;
+
 USE reservation_salle_bdd;
 
+### 3) Créer le fichier `.env`
 
-
-
-### 3- Créer le fichier `.env`
-
-Dans le dossier `BackEnd`, créer un fichier nommé `.env` contenant :
-
+Dans le dossier `BackEnd`, créez un fichier `.env` contenant :
 
 DB_NAME=reservation_salle_bdd
-
 DB_USER=root
-
-DB_PASSWORD=mot_de_passe_mysql *(votre mot de passe lors de l'installation du MySQL)*
-
+DB_PASSWORD=mot_de_passe_mysql # votre mot de passe MySQL(obtenu dans linstallation).
 DB_HOST=localhost
-
 JWT_SECRET=your_super_secret_key_here_change_this_in_production
-
 JWT_EXPIRES_IN=7d
 
-
-> **Le fichier `.env` n’est pas inclus dans le dépôt GitHub pour des raisons de sécurité.  
+> \*\*Le fichier `.env` n’est pas inclus dans le dépôt GitHub pour des raisons de sécurité.
 > Il doit être créé localement.
 
 ---
 
 ## Lancer le serveur backend
 
-Toujours dans le dossier `BackEnd`, exécuter :
-
+Toujours dans le dossier `BackEnd`, exécutez :
 
 node app.js
 
-
 Si la configuration est correcte, le serveur démarre et l’API est accessible.
 
-## Si vous souhaitez remplir les tables de la base de données avec des données de test:
+## Données de test (optionnel)
 
-exécutez « seed.js » avec « node seed.js », puis redémarrez le serveur avec « node app.js ».
+Pour remplir les tables avec des données de test :
 
-voici les emails et mot de passes:
+1. Exécutez :
+   node seed.js
+2. Redémarrez le serveur :
+   node app.js
 
-admin@example.com / Admin123!
+Comptes de test :
 
-proprietaire@example.com / Prop123!
+- admin@example.com / Admin123!
+- proprietaire@example.com / Prop123!
+- client@example.com / Client123!
 
-client@example.com / Client123!
+## Lancer l’interface
 
+Ouvrez [Frontend/index.html](Frontend/index.html) dans votre navigateur.
 
-Lancer maintenent index.html dans /Frontend.
-
-Vous pouvez maintenant remplir la base de données à l'aide de l'interface et tester toutes les fonctionnalités.
+Vous pouvez maintenant utiliser l’interface pour remplir la base et tester les fonctionnalités.
 
 ---
 
@@ -165,7 +164,6 @@ Vous pouvez maintenant remplir la base de données à l'aide de l'interface et t
 - JSON
 - JWT (pour l’authentification)
 
- ## Schema de base de donnees peut etre consulter depuis l'image ou pdf "Diagramme de schema de la bdd"
+## Schema de base de donnees peut etre consulter depuis l'image ou pdf "Diagramme de schema de la bdd"
 
 ---
-
