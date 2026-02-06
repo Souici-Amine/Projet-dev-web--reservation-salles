@@ -89,7 +89,7 @@ Ouvrez le dossier du projet dans VS Code.
 
 ### 1) Accéder au dossier backend
 
-Dans VScode ouvrez un terminal et placez-vous dans le dossier backend :
+Dans VScode ouvrez un terminal(cmd et pas powershell!) et placez-vous dans le dossier backend :
 
 cd BackEnd
 
